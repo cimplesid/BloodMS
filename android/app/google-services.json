@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "157017620061",
+    "firebase_url": "https://bloodms.firebaseio.com",
+    "project_id": "bloodms",
+    "storage_bucket": "bloodms.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157017620061:android:6a0356f3863abe36",
+        "android_client_info": {
+          "package_name": "com.sid.bloodms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157017620061-fcs1bav2l8f7eqmbmsp03c8j62ssjefr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxmc8oEdS9Em2gvH9Dx1QcLnxLCIBk5BU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157017620061-fcs1bav2l8f7eqmbmsp03c8j62ssjefr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
