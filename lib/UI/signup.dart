@@ -16,6 +16,7 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   var _email = TextEditingController();
   var _user = TextEditingController();
   var _pass = TextEditingController();
@@ -39,17 +40,20 @@ class _SignupState extends State<Signup> {
       .map(
         (String value) => DropdownMenuItem<String>(
               value: value,
-              child: Text(value,style: TextStyle(color: Colors.red,)),
+              child: Text(value,
+                  style: TextStyle(
+                    color: Colors.red,
+                  )),
             ),
       )
       .toList();
   String selectedvalue;
   var _scaffoldkey = GlobalKey<ScaffoldState>();
   void _signup() async {
-  
-    if (_email.text.isEmpty || _pass.text.isEmpty || _cpass.text.isEmpty) {
-      showSnackbar("Email or Password cannot be empty");
-    }
+    if (_formkey.currentState.validate()) {
+      _formkey.currentState.save();
+    } else
+      return;
     if (_pass.text != _cpass.text) {
       showSnackbar('Password do not match');
     } else {
@@ -59,17 +63,18 @@ class _SignupState extends State<Signup> {
         });
         var fUser = await FirebaseAuthProvider()
             .signup(_email.text, _pass.text, _user.text);
-      FirestoreProvider().addUser(user..id= fUser.uid);
+        FirestoreProvider().addUser(user..id = fUser.uid);
 
         setState(() {
           _email.text = "";
           _pass.text = "";
-        
+
           index = true;
           loading = false;
         });
         showSnackbar('Sucessfully signed up login now');
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Login()));
       } catch (err) {
         setState(() {
           loading = false;
@@ -130,155 +135,185 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Column buildSignupForm() {
-    return Column(
-      children: <Widget>[
-        CustomTextField(
-          controller: _user,
-          onChanged: (value) {
-            user.name = value;
-          },
-          label: "Fullname",
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        CustomTextField(
-          controller: _email,
-          onChanged: (value) {
-            user.email = value;
-          },
-          label: "Email",
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        CustomTextField(
-          controller: _pass,
-          label: "Password",
-          obscure: hiddenText,
-          suffixIcon: IconButton(
-            icon: Icon(hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
-                color: Colors.grey),
-            onPressed: () {
-              setState(() {
-                hiddenText = !hiddenText;
-              });
+  buildSignupForm() {
+    return Form(
+      key: _formkey,
+      child: Column(
+        children: <Widget>[
+          CustomTextField(
+            textCapitalization: TextCapitalization.words,
+            controller: _user,
+            onSaved: (value) {
+              user.name = value;
+            },
+            label: "Fullname",
+            hint: "Ex: Marquees Brownlee",
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
             },
           ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        CustomTextField(
-          controller: _cpass,
-          label: "Confirm Password",
-          obscure: hiddenText,
-          suffixIcon: IconButton(
-            icon: Icon(
-              hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                hiddenText = !hiddenText;
-              });
+          SizedBox(
+            height: 20,
+          ),
+          CustomTextField(
+            controller: _email,
+            onSaved: (value) {
+              user.email = value;
             },
+            hint: "Email",
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
+            },
+            label: "Email",
           ),
-        ),
-
-        //
-        SizedBox(
-          height: 20,
-        ),
-        CustomTextField(
-          onChanged: (value) {
-            user.contact = value;
-          },
-          label: 'Contact',
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Container(
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey, width: 1))),
-          child: DropdownButtonFormField(
-            value: selectedvalue,
-            hint: Text(
-              'Blood Group',
-              style: TextStyle(color: Colors.white),
-            ),
-            items: _bloodgroups,
-            onChanged: ((String newvalue) {
-              setState(() {
-                selectedvalue = newvalue;
-
-                user.blood = selectedvalue;
-              });
-            }),
+          SizedBox(
+            height: 20,
           ),
-        ),
-        SizedBox(height: 20),
-        Container(
-          alignment: Alignment.topLeft,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey, width: 1))),
-          height: 55,
-          child: FlatButton(
-            child: Text(locname,
-                style: TextStyle(
-                  color: Colors.white,
-                )),
-            onPressed: () async {
-              var loc = await Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Maps()));
-              if (loc != null) {
+          CustomTextField(
+            controller: _pass,
+            label: "Password",
+            hint: "Password",
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
+            },
+            obscure: hiddenText,
+            suffixIcon: IconButton(
+              icon: Icon(hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
+                  color: Colors.grey),
+              onPressed: () {
                 setState(() {
-                  locname = "${loc.latitude},${loc.longitude}";
+                  hiddenText = !hiddenText;
                 });
-                user.latitude = loc.latitude;
-                user.longitude = loc.longitude;
-              }
-            },
+              },
+            ),
           ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            SizedBox(
-              height: 90,
-              child: ClipPolygon(
-                sides: 6,
-                rotate: 120,
-                borderRadius: 9.0,
-                child: Container(
-                  color: Colors.red,
-                  child: loading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.yellow)))
-                      : IconButton(
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
+          SizedBox(
+            height: 20,
+          ),
+          CustomTextField(
+            controller: _cpass,
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
+            },
+            label: "Confirm Password",
+            hint: "Re-Enter Password",
+            obscure: hiddenText,
+            suffixIcon: IconButton(
+              icon: Icon(
+                hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  hiddenText = !hiddenText;
+                });
+              },
+            ),
+          ),
+
+          //
+          SizedBox(
+            height: 20,
+          ),
+          CustomTextField(
+            onSaved: (value) {
+              user.contact = value;
+            },
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
+            },
+            label: 'Contact',
+            hint: '9880124587',
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(color: Colors.grey, width: 1))),
+            child: DropdownButtonFormField(
+              validator: (value) {
+                if (value.isEmpty) return 'This field can\'t be empty';
+              },
+              value: selectedvalue,
+              hint: Text(
+                'Blood Group',
+                style: TextStyle(color: Colors.white),
+              ),
+              items: _bloodgroups,
+              onSaved: ((String newvalue) {
+                setState(() {
+                  selectedvalue = newvalue;
+
+                  user.blood = selectedvalue;
+                });
+              }),
+            ),
+          ),
+          SizedBox(height: 20),
+          Container(
+            alignment: Alignment.topLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(color: Colors.grey, width: 1))),
+            height: 55,
+            child: FlatButton(
+              child: Text(locname,
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
+              onPressed: () async {
+                var loc = await Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Maps()));
+                if (loc != null) {
+                  setState(() {
+                    locname = "${loc.latitude},${loc.longitude}";
+                  });
+                  user.latitude = loc.latitude;
+                  user.longitude = loc.longitude;
+                }
+              },
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              SizedBox(
+                height: 90,
+                child: ClipPolygon(
+                  sides: 6,
+                  rotate: 120,
+                  borderRadius: 9.0,
+                  child: Container(
+                    color: Colors.red,
+                    child: loading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.yellow)))
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                            ),
+                            onPressed: _signup,
                           ),
-                          onPressed: _signup,
-                        ),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
-   showErrorDialog() {
+
+  showErrorDialog() {
     return showDialog(
         context: context,
         builder: (context) {

@@ -108,19 +108,27 @@ class _LoginState extends State<Login> {
     return Column(
       children: <Widget>[
         CustomTextField(
-          onChanged: (value) {
+          onSaved: (value) {
             email = value;
           },
           label: 'Email',
+          hint: 'Email',
+          onValidate: (value) {
+            if (value.isEmpty) return 'This field can\'t be empty';
+          },
         ),
         SizedBox(
           height: 20,
         ),
         CustomTextField(
-          onChanged: (value) {
+          onSaved: (value) {
             password = value;
           },
           label: 'Passsword',
+          hint: 'Passsword',
+          onValidate: (value) {
+            if (value.isEmpty) return 'This field can\'t be empty';
+          },
           obscure: hiddenText,
           suffixIcon: IconButton(
             icon: Icon(

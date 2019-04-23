@@ -9,7 +9,7 @@ class FirestoreProvider {
     await ref.setData(user.toMap());
     return user;
   }
-
+  
   Future getUsers() async {
     var docs = await _firestore.collection('users').getDocuments();
     return docs.documents
