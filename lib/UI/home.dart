@@ -12,6 +12,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isLoggedIn = false;
+  var _scaffoldkey = GlobalKey<ScaffoldState>();
+
   getUser() async {
     var user = await FirebaseAuthProvider().getCurrentUser();
     if (user == null) {
@@ -49,10 +51,16 @@ class _HomeState extends State<Home> {
     super.initState();
     getUser();
   }
-
+showSnackbar(message) {
+    _scaffoldkey.currentState.showSnackBar(SnackBar(
+      backgroundColor: Colors.purple,
+      content: Text(message ?? "Something went wrong, try again later."),
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
       appBar: AppBar(
         title: Text(
           'User',
@@ -65,7 +73,10 @@ class _HomeState extends State<Home> {
                   icon: Icon(MdiIcons.logout),
                   onPressed: () async {
                     await FirebaseAuthProvider().logout();
+                  showSnackbar('You are logged out');
+
                     getUser();
+
                   })
         ],
         backgroundColor: Colors.red.shade900,

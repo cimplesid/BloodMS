@@ -35,6 +35,7 @@ class CustomTextField extends StatelessWidget {
         onSaved: (value) {
           if (onSaved != null) onSaved(value);
         },
+        
         keyboardType: inputType,
         textCapitalization: textCapitalization,
         controller: controller,

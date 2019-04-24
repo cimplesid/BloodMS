@@ -38,10 +38,9 @@ class _MapsState extends State<Maps> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('map'),
+        title: Text('Pick your Location'),
       ),
       body: GoogleMap(
-          myLocationEnabled: true,
           onMapCreated: (controller) => onMapCreated(controller),
           initialCameraPosition: CameraPosition(
             target: LatLng(0, 0),

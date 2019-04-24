@@ -11,8 +11,16 @@ class FirestoreProvider {
     return user;
   }
 
-  Future getUsers() async {
-    var docs = await _firestore.collection('users').getDocuments();
+  Future getUsers({bloodGroup}) async {
+    var docs;
+    if (bloodGroup != null) {
+      docs = await _firestore
+          .collection('users')
+          .where("blood", isEqualTo: bloodGroup)
+          .getDocuments();
+    } else {
+      docs = await _firestore.collection('users').getDocuments();
+    }
     return docs.documents
         .map<UserModel>((d) => UserModel.fromMap(d.data))
         .toList();

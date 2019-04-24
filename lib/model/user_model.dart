@@ -25,7 +25,7 @@ class UserModel {
     map[Email] = email;
     return map;
   }
-  static fromMap(var user) {
+  static UserModel fromMap(var user) {
     return UserModel(name: user[Name],contact: user[Contact],blood: user[Bloodgroup],longitude: user[Longitude],latitude: user[Latitude],email: user[Email]);
   }
 }

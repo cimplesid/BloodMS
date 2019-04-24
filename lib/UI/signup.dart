@@ -220,10 +220,12 @@ class _SignupState extends State<Signup> {
               user.contact = value;
             },
             onValidate: (value) {
-              if (value.isEmpty) return 'This field can\'t be empty';
+              if (value.length != 10)
+                return 'Phone Number must be of 10 digits';
+            else  if (value.isEmpty) return 'This field can\'t be empty';
             },
             label: 'Contact',
-            hint: '9880124587',
+            hint: 'Ex:9880124587',
           ),
           SizedBox(
             height: 20,

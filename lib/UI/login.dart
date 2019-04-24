@@ -75,8 +75,7 @@ class _LoginState extends State<Login> {
   void _login() async {
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
-    } else {
-      try {
+       try {
         setState(() {
           loading = true;
         });
@@ -110,6 +109,7 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           CustomTextField(
             onSaved: (value) {
+              print(value);
               email = value;
             },
             inputType: TextInputType.emailAddress,
