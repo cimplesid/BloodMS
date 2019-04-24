@@ -1,4 +1,3 @@
-import 'package:bloodms/UI/appbar.dart';
 import 'package:bloodms/UI/map.dart';
 import 'package:bloodms/model/user_model.dart';
 import 'package:bloodms/resources/firestore_provider.dart';
@@ -11,7 +10,6 @@ class Adduser extends StatefulWidget {
 }
 
 class _AdduserState extends State<Adduser> {
-  @override
   String locname = 'Location';
   bool loading = false;
   UserModel user = UserModel(
@@ -27,6 +25,8 @@ class _AdduserState extends State<Adduser> {
       )
       .toList();
   String selectedvalue;
+  @override
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('donate blood save life')),

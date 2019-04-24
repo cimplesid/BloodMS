@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:bloodms/UI/donors.dart';
-import 'package:bloodms/UI/login.dart';
 
 import 'UI/home.dart';
 import 'package:flutter/material.dart';

@@ -16,8 +16,8 @@ class CustomTextField extends StatelessWidget {
       this.obscure = false,
       this.suffixIcon,
       this.controller,
-      this.textCapitalization,
-      this.inputType,
+      this.textCapitalization = TextCapitalization.none,
+      this.inputType = TextInputType.text,
       this.hint,
       this.onValidate})
       : super(key: key);
@@ -28,13 +28,12 @@ class CustomTextField extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.grey, width: 1))),
       child: TextFormField(
+        // autovalidate: true,
         validator: (value) {
-          if(onValidate!=null)
-          onValidate(value);
+          if (onValidate != null) return onValidate(value);
         },
         onSaved: (value) {
-          if(onSaved!=null)
-          onSaved(value);
+          if (onSaved != null) onSaved(value);
         },
         keyboardType: inputType,
         textCapitalization: textCapitalization,

@@ -1,11 +1,9 @@
 import 'package:bloodms/UI/login.dart';
 import 'package:bloodms/UI/profile.dart';
-import 'package:bloodms/UI/signup.dart';
 import 'package:bloodms/resources/firebase_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'donors.dart';
-import 'adduser.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -28,18 +26,21 @@ class _HomeState extends State<Home> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              content: Text('you must Login to continue',
+              content: Text('You must Login to continue !',
                   style: TextStyle(color: Colors.red)),
               actions: <Widget>[
                 FlatButton(
-                    child: Text('ok'),
+                    child: Text('Ok'),
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => Login()));
                     }),
               ],
-              title: Text('Oops'));
+              title: Text(
+                'Oops',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ));
         });
   }
 

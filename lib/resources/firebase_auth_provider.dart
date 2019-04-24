@@ -14,7 +14,7 @@ class FirebaseAuthProvider {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future getCurrentUser() async {
+  Future<FirebaseUser> getCurrentUser() async {
     return _auth.currentUser();
   }
 

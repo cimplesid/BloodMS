@@ -1,13 +1,10 @@
 import 'package:bloodms/UI/Widget/customtextfield.dart';
 import 'package:bloodms/UI/basescreen.dart';
-import 'package:bloodms/UI/donors.dart';
 import 'package:bloodms/UI/home.dart';
-import 'package:bloodms/UI/profile.dart';
 import 'package:bloodms/UI/signup.dart';
 import 'package:bloodms/resources/firebase_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:polygon_clipper/polygon_border.dart';
 import 'package:polygon_clipper/polygon_clipper.dart';
 
 class Login extends StatefulWidget {
@@ -16,6 +13,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
   String logintext = "LOGIN";
   String signuptext = "/SignUp";
 
@@ -74,8 +73,8 @@ class _LoginState extends State<Login> {
   }
 
   void _login() async {
-    if (email.isEmpty || password.isEmpty) {
-      showSnackbar("Email and password cannot empty");
+    if (_formkey.currentState.validate()) {
+      _formkey.currentState.save();
     } else {
       try {
         setState(() {
@@ -104,92 +103,96 @@ class _LoginState extends State<Login> {
     ));
   }
 
-  Column buildLoginForm() {
-    return Column(
-      children: <Widget>[
-        CustomTextField(
-          onSaved: (value) {
-            email = value;
-          },
-          label: 'Email',
-          hint: 'Email',
-          onValidate: (value) {
-            if (value.isEmpty) return 'This field can\'t be empty';
-          },
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        CustomTextField(
-          onSaved: (value) {
-            password = value;
-          },
-          label: 'Passsword',
-          hint: 'Passsword',
-          onValidate: (value) {
-            if (value.isEmpty) return 'This field can\'t be empty';
-          },
-          obscure: hiddenText,
-          suffixIcon: IconButton(
-            icon: Icon(
-              hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                hiddenText = !hiddenText;
-              });
+  buildLoginForm() {
+    return Form(
+      key: _formkey,
+      child: Column(
+        children: <Widget>[
+          CustomTextField(
+            onSaved: (value) {
+              email = value;
+            },
+            inputType: TextInputType.emailAddress,
+            label: 'Email',
+            hint: 'Email',
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
             },
           ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            GestureDetector(
-              child: Text(
-                'Forgot Password ?',
-                style: TextStyle(color: Colors.red),
+          SizedBox(
+            height: 20,
+          ),
+          CustomTextField(
+            onSaved: (value) {
+              password = value;
+            },
+            label: 'Passsword',
+            hint: 'Passsword',
+            onValidate: (value) {
+              if (value.isEmpty) return 'This field can\'t be empty';
+            },
+            obscure: hiddenText,
+            suffixIcon: IconButton(
+              icon: Icon(
+                hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
+                color: Colors.grey,
               ),
-              onTap: showForgorPassword,
-            )
-          ],
-        ),
-        SizedBox(
-          height: 40,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            SizedBox(
-              height: 90,
-              child: ClipPolygon(
-                sides: 6,
-                rotate: 120,
-                borderRadius: 9.0,
-                child: Container(
-                  color: Colors.red,
-                  child: loading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.yellow),
-                        ))
-                      : IconButton(
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  hiddenText = !hiddenText;
+                });
+              },
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              GestureDetector(
+                child: Text(
+                  'Forgot Password ?',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: showForgorPassword,
+              )
+            ],
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              SizedBox(
+                height: 90,
+                child: ClipPolygon(
+                  sides: 6,
+                  rotate: 120,
+                  borderRadius: 9.0,
+                  child: Container(
+                    color: Colors.red,
+                    child: loading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.yellow),
+                          ))
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                            ),
+                            onPressed: _login,
                           ),
-                          onPressed: _login,
-                        ),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 

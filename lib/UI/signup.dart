@@ -1,7 +1,6 @@
 import 'package:bloodms/UI/Widget/customtextfield.dart';
 import 'package:bloodms/UI/basescreen.dart';
 import 'package:bloodms/UI/login.dart';
-import 'package:bloodms/UI/login.dart';
 import 'package:bloodms/resources/firebase_auth_provider.dart';
 import 'package:bloodms/resources/firestore_provider.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +163,7 @@ class _SignupState extends State<Signup> {
             onValidate: (value) {
               if (value.isEmpty) return 'This field can\'t be empty';
             },
+            inputType: TextInputType.emailAddress,
             label: "Email",
           ),
           SizedBox(
@@ -233,19 +233,16 @@ class _SignupState extends State<Signup> {
                 border:
                     Border(bottom: BorderSide(color: Colors.grey, width: 1))),
             child: DropdownButtonFormField(
-              validator: (value) {
-                if (value.isEmpty) return 'This field can\'t be empty';
-              },
               value: selectedvalue,
               hint: Text(
                 'Blood Group',
                 style: TextStyle(color: Colors.white),
               ),
               items: _bloodgroups,
-              onSaved: ((String newvalue) {
+              onChanged: ((String newvalue) {
                 setState(() {
                   selectedvalue = newvalue;
-
+                  print(selectedvalue);
                   user.blood = selectedvalue;
                 });
               }),
