@@ -13,7 +13,7 @@ class FirestoreProvider {
 
   Future getUsers({bloodGroup}) async {
     var docs;
-    if (bloodGroup != null) {
+    if (bloodGroup != "All") {
       docs = await _firestore
           .collection('users')
           .where("blood", isEqualTo: bloodGroup)

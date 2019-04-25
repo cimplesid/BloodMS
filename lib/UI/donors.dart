@@ -1,7 +1,6 @@
 import 'package:bloodms/UI/donormap.dart';
 import 'package:bloodms/model/user_model.dart';
 import 'package:bloodms/resources/firestore_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,8 +20,8 @@ class _DonorState extends State<Donor> {
   List<UserModel> donors;
   LatLng currentLocation;
   List<Marker> markers = [];
-  String selectedValue;
-  List blood = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
+  String selectedValue = 'All';
+  List blood = ['All', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
   void onMapCreated(GoogleMapController controller) async {
     this.controller = controller;
     var locationData = await Location().getLocation();
@@ -85,32 +84,12 @@ class _DonorState extends State<Donor> {
                   });
                   getUser();
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                      PopupMenuItem(
-                        value: blood[0],
-                        child: Text('A+'),
-                      ),
-                      PopupMenuItem(
-                        value: blood[1],
-                        child: Text('A-'),
-                      ),
-                      PopupMenuItem(
-                        value: blood[2],
-                        child: Text('B+'),
-                      ),
-                      PopupMenuItem(
-                        value: blood[3],
-                        child: Text('B-'),
-                      ),
-                      PopupMenuItem(
-                        value: blood[4],
-                        child: Text('O+'),
-                      ),
-                      PopupMenuItem(
-                        value: blood[5],
-                        child: Text('O-'),
-                      ),
-                    ],
+                itemBuilder: (BuildContext context) => blood
+                    .map((b) => PopupMenuItem(
+                          child: Text(b),
+                          value: b,
+                        ))
+                    .toList(),
               )),
           Expanded(
             child: Padding(
@@ -216,7 +195,8 @@ class _DonorState extends State<Donor> {
       });
     });
   }
-showSnackbar(message) {
+
+  showSnackbar(message) {
     _scaffoldkey.currentState.showSnackBar(SnackBar(
       backgroundColor: Theme.of(context).primaryColor,
       content: Text(message ?? "Something went wrong, try again later."),
@@ -226,7 +206,7 @@ showSnackbar(message) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldkey,
+        key: _scaffoldkey,
         appBar: AppBar(
           title: Text('Donors'),
           actions: <Widget>[
