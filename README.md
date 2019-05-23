@@ -1,9 +1,30 @@
 # BloodMS
-
+![GitHub last commit](https://img.shields.io/github/last-commit/cimplesid/BloodMS.svg)
+[![](https://img.shields.io/github/stars/cimplesid/BloodMS.svg)](https://github.com/cimplesid/BloodMS)
+![Maintenance](https://img.shields.io/maintenance/yes/2019.svg)
  A blood management project.
 
 
 <img src="screenshots/blood.png" >
+
+## Key features
+
+- logins for users/members,
+- New donor can be added,
+- Donor can be contacted easily with the contact info,
+- List of the donors can be easily available from map view,
+- You can add yourself as donor,
+- Realtime data update,
+- Security for authenticated user.
+
+## Objectives
+- To develop a computerized centralized blood management system.
+- To develop automated system for tracking of blood products from initial ordering of
+blood through the transfusion of blood in patient, to updating data and records.
+- To create easy, hassle free and transparent interface between donor, receiver.
+- To record and document the data in proper, long lasting and secure manner.
+- To manage donated blood properly and effectively especially rare blood type.
+- To save life as much as possible.
 
 ## Working Example
 ### Part 1
