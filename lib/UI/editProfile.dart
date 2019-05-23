@@ -1,28 +1,26 @@
 import 'package:bloodms/UI/Widget/customtextfield.dart';
 import 'package:bloodms/UI/basescreen.dart';
-import 'package:bloodms/UI/login.dart';
 import 'package:bloodms/resources/firebase_auth_provider.dart';
 import 'package:bloodms/resources/firestore_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:polygon_clipper/polygon_clipper.dart';
 import 'package:bloodms/UI/map.dart';
 import 'package:bloodms/model/user_model.dart';
 
-  class Signup extends StatefulWidget {
+class EditProfile extends StatefulWidget {
+  EditProfile({this.userModel});
+  final UserModel userModel;
   @override
-  _SignupState createState() => _SignupState();
+  _EditState createState() => _EditState();
 }
 
-class _SignupState extends State<Signup> {
+class _EditState extends State<EditProfile> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  var _email = TextEditingController();
   var _user = TextEditingController();
-  var _pass = TextEditingController();
-  var _cpass = TextEditingController();
+  var _phone = TextEditingController();
   String selectedValue;
   var _scaffoldkey = GlobalKey<ScaffoldState>();
-  String signupText = "SignUp";
+  String text = "Edit profile";
   String locationName = 'Location';
   bool index = true;
   bool isLoading = false;
@@ -36,7 +34,6 @@ class _SignupState extends State<Signup> {
       latitude: 0,
       email: "");
   static const blood = <String>['A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
-
   final List<DropdownMenuItem<String>> _bloodgroups = blood
       .map(
         (String value) => DropdownMenuItem<String>(
@@ -49,38 +46,29 @@ class _SignupState extends State<Signup> {
       )
       .toList();
 
-  void _signup() async {
+  void _update() async {
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
     } else
       return;
-    if (_pass.text != _cpass.text) {
-      showSnackbar('Password do not match');
-    } else {
-      try {
-        setState(() {
-          isLoading = true;
-        });
-        var fUser = await FirebaseAuthProvider()
-            .signup(_email.text, _pass.text, _user.text);
-        FirestoreProvider().addUser(user..id = fUser.uid);
 
-        setState(() {
-          _email.text = "";
-          _pass.text = "";
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-          index = true;
-          isLoading = false;
-        });
-        showSnackbar('Sucessfully signed up login now');
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Login()));
-      } catch (err) {
-        setState(() {
-          isLoading = false;
-        });
-        showSnackbar(err.message);
-      }
+      await FirestoreProvider().updateUser(user);
+
+      setState(() {
+        index = true;
+        isLoading = false;
+      });
+      Navigator.of(context).pop(context);
+    } catch (err) {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackbar(err.message);
     }
   }
 
@@ -89,6 +77,25 @@ class _SignupState extends State<Signup> {
       backgroundColor: Theme.of(context).primaryColor,
       content: Text(message ?? "Something went wrong, try again later."),
     ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.userModel != null) {
+      _user.text = widget.userModel.name;
+      _phone.text = widget.userModel.contact;
+      selectedValue = widget.userModel.blood;
+      locationName =
+          "${widget.userModel.latitude},${widget.userModel.longitude}";
+      setUser();
+      user = widget.userModel;
+    }
+  }
+
+  setUser() async {
+    var userr = await FirebaseAuthProvider().getCurrentUser();
+    user.id = userr.uid;
   }
 
   @override
@@ -101,7 +108,7 @@ class _SignupState extends State<Signup> {
           child: Padding(
             padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Row(
                   children: <Widget>[
@@ -110,19 +117,16 @@ class _SignupState extends State<Signup> {
                         Icons.arrow_back,
                         color: Colors.white,
                       ),
-                      onPressed: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      },
-                    )
+                      onPressed: () => Navigator.of(context).pop(context),
+                    ),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     GestureDetector(
                       child: Text(
-                        signupText,
+                        text,
                         style: TextStyle(color: Colors.white, fontSize: 35),
                       ),
                     ),
@@ -161,67 +165,7 @@ class _SignupState extends State<Signup> {
             height: 20,
           ),
           CustomTextField(
-            controller: _email,
-            onSaved: (value) {
-              user.email = value;
-            },
-            hint: "Email",
-            onValidate: (value) {
-              if (value.isEmpty) return 'This field can\'t be empty';
-            },
-            inputType: TextInputType.emailAddress,
-            label: "Email",
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          CustomTextField(
-            controller: _pass,
-            label: "Password",
-            hint: "Password",
-            onValidate: (value) {
-              if (value.isEmpty) return 'This field can\'t be empty';
-            },
-            obscure: hiddenText,
-            suffixIcon: IconButton(
-              icon: Icon(hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
-                  color: Colors.grey),
-              onPressed: () {
-                setState(() {
-                  hiddenText = !hiddenText;
-                });
-              },
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          CustomTextField(
-            controller: _cpass,
-            onValidate: (value) {
-              if (value.isEmpty) return 'This field can\'t be empty';
-            },
-            label: "Confirm Password",
-            hint: "Re-Enter Password",
-            obscure: hiddenText,
-            suffixIcon: IconButton(
-              icon: Icon(
-                hiddenText ? MdiIcons.eye : MdiIcons.eyeOff,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  hiddenText = !hiddenText;
-                });
-              },
-            ),
-          ),
-
-          //
-          SizedBox(
-            height: 20,
-          ),
-          CustomTextField(
+            controller: _phone,
             onSaved: (value) {
               user.contact = value;
             },
@@ -306,7 +250,7 @@ class _SignupState extends State<Signup> {
                               Icons.arrow_forward,
                               color: Colors.white,
                             ),
-                            onPressed: _signup,
+                            onPressed: _update,
                           ),
                   ),
                 ),

@@ -15,7 +15,6 @@ class Donor extends StatefulWidget {
 class _DonorState extends State<Donor> {
   bool index = true;
   var _scaffoldkey = GlobalKey<ScaffoldState>();
-
   GoogleMapController controller;
   List<UserModel> donors;
   LatLng currentLocation;
@@ -71,13 +70,20 @@ class _DonorState extends State<Donor> {
         children: <Widget>[
           ListTile(
               leading: selectedValue != null
-                  ? Text(selectedValue)
+                  ? Text(
+                      selectedValue,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    )
                   : Text(
                       'Filter',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
               trailing: PopupMenuButton(
-                icon: Icon(Icons.list),
+                icon: Icon(
+                  Icons.list,
+                  color: Colors.white,
+                ),
                 onSelected: (value) {
                   setState(() {
                     selectedValue = value;
@@ -98,82 +104,97 @@ class _DonorState extends State<Donor> {
                 itemCount: donors.length,
                 itemBuilder: (context, i) {
                   var donor = donors[i];
-                  return GestureDetector(
-                    onTap: () {
-                      showBottomSheet(
-                          context: context,
-                          builder: (context) => DonorMap(
-                              LatLng(donor.latitude, donor.longitude)));
-                    },
-                    child: Container(
+                  if (donors.length == 0) {
+                    return Center(
+                      child: Text(
+                        'Oops No donors for this bloodgroup',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  } else
+                    return GestureDetector(
+                      onTap: () {
+                        showBottomSheet(
+                            context: context,
+                            builder: (context) => DonorMap(
+                                height: 300,
+                                donorLocation: LatLng(
+                                  donor.latitude,
+                                  donor.longitude,
+                                )));
+                      },
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(16.0, 30.0, 0, 10),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Name:${donor.name}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Icon(
-                                  MdiIcons.water,
-                                  size: 55,
-                                  color: Colors.red.shade800,
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Contact: ${donor.contact}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(right: 16),
-                                  child: Text(
-                                    ' ${donor.blood}',
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(16.0, 30.0, 0, 10),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Name:${donor.name}',
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                    margin: EdgeInsets.symmetric(vertical: 8.0),
-                                    height: 2.0,
-                                    width: 18.0,
-                                    color: Color(0xff00d6ff)),
-                              ],
+                                  Icon(
+                                    MdiIcons.water,
+                                    size: 55,
+                                    color: Colors.red.shade800,
+                                  )
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Contact: ${donor.contact}',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 16),
+                                    child: Text(
+                                      ' ${donor.blood}',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Container(
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      height: 2.0,
+                                      width: 18.0,
+                                      color: Color(0xff00d6ff)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        height: 154.0,
+                        margin: EdgeInsets.only(top: 12.0),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.red, Colors.teal]),
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 15.0,
+                              offset: Offset(0.0, 10.0),
                             ),
                           ],
                         ),
                       ),
-                      height: 154.0,
-                      margin: EdgeInsets.only(top: 12.0),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Colors.red, Colors.teal]),
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 15.0,
-                            offset: Offset(0.0, 10.0),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                    );
                 },
               ),
             ),
@@ -206,6 +227,7 @@ class _DonorState extends State<Donor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.red[900],
         key: _scaffoldkey,
         appBar: AppBar(
           title: Text('Donors'),

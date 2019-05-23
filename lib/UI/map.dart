@@ -11,6 +11,7 @@ class _MapsState extends State<Maps> {
   List<Marker> markers = [];
   GoogleMapController controller;
   LatLng currentLocation;
+
   onMapCreated(GoogleMapController controller) async {
     this.controller = controller;
     var locationData = await Location().getLocation();

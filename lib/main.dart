@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'UI/home.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -7,12 +6,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'bloodms',
+      title: 'Bloodms',
       theme: ThemeData(
         appBarTheme: AppBarTheme(color: Colors.red.shade900),
         primarySwatch: Colors.red,

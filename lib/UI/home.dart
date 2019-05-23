@@ -51,19 +51,21 @@ class _HomeState extends State<Home> {
     super.initState();
     getUser();
   }
-showSnackbar(message) {
+
+  showSnackbar(message) {
     _scaffoldkey.currentState.showSnackBar(SnackBar(
       backgroundColor: Colors.purple,
       content: Text(message ?? "Something went wrong, try again later."),
     ));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldkey,
       appBar: AppBar(
         title: Text(
-          'User',
+          'BloodMS',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
@@ -73,10 +75,9 @@ showSnackbar(message) {
                   icon: Icon(MdiIcons.logout),
                   onPressed: () async {
                     await FirebaseAuthProvider().logout();
-                  showSnackbar('You are logged out');
+                    showSnackbar('You are logged out');
 
                     getUser();
-
                   })
         ],
         backgroundColor: Colors.red.shade900,

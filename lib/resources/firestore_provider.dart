@@ -11,6 +11,12 @@ class FirestoreProvider {
     return user;
   }
 
+  void delete() async {
+    var user = await FirebaseAuthProvider().getCurrentUser();
+
+    _firestore.collection('users').document(user.uid).delete();
+  }
+
   Future getUsers({bloodGroup}) async {
     var docs;
     if (bloodGroup != "All") {
@@ -30,5 +36,14 @@ class FirestoreProvider {
     var user = await FirebaseAuthProvider().getCurrentUser();
     var doc = await _firestore.collection('users').document(user.uid).get();
     return UserModel.fromMap(doc.data);
+  }
+
+  Future<void> updateUser( UserModel user) async {
+    var userr = await FirebaseAuthProvider().getCurrentUser();
+
+    return await _firestore
+        .collection('users')
+        .document(userr.uid)
+        .setData(user.toMap(), merge: true);
   }
 }

@@ -10,11 +10,11 @@ class Adduser extends StatefulWidget {
 }
 
 class _AdduserState extends State<Adduser> {
-  String locname = 'Location';
-  bool loading = false;
+  String selectedvalue;
+  String locationName = 'Location';
+  bool isLoading = false;
   UserModel user = UserModel(
       id: "", name: "", blood: "", contact: "", longitude: 0, latitude: 0);
-
   static const blood = <String>['A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
   final List<DropdownMenuItem<String>> _bloodgroups = blood
       .map(
@@ -24,12 +24,11 @@ class _AdduserState extends State<Adduser> {
             ),
       )
       .toList();
-  String selectedvalue;
   @override
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('donate blood save life')),
+        appBar: AppBar(title: Text('Donate blood save life')),
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -84,7 +83,7 @@ class _AdduserState extends State<Adduser> {
                       child: Row(
                         children: <Widget>[
                           Icon(Icons.location_on),
-                          Text(locname)
+                          Text(locationName)
                         ],
                       ),
                       onPressed: () async {
@@ -92,7 +91,7 @@ class _AdduserState extends State<Adduser> {
                             MaterialPageRoute(builder: (context) => Maps()));
                         if (loc != null) {
                           setState(() {
-                            locname = "${loc.latitude},${loc.longitude}";
+                            locationName = "${loc.latitude},${loc.longitude}";
                           });
                           user.latitude = loc.latitude;
                           user.longitude = loc.longitude;
@@ -123,7 +122,7 @@ class _AdduserState extends State<Adduser> {
                     height: 50,
                     child: RaisedButton(
                       color: Colors.red.shade900,
-                      child: loading
+                      child: isLoading
                           ? CircularProgressIndicator(
                               backgroundColor: Colors.white,
                             )
@@ -138,11 +137,11 @@ class _AdduserState extends State<Adduser> {
                             user.longitude != null &&
                             user.latitude != null) {
                           setState(() {
-                            loading = true;
+                            isLoading = true;
                           });
                           FirestoreProvider().addUser(user).then((response) => {
                                 setState(() {
-                                  loading = false;
+                                  isLoading = false;
                                 }),
                                 showSuccessDialog()
                               });
@@ -185,7 +184,7 @@ class _AdduserState extends State<Adduser> {
                   style: TextStyle(color: Colors.green)),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('ok'),
+                  child: Text('Ok'),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],

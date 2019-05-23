@@ -1,9 +1,13 @@
 import 'package:bloodms/UI/basescreen.dart';
+import 'package:bloodms/UI/editProfile.dart';
+import 'package:bloodms/UI/home.dart';
 import 'package:bloodms/model/user_model.dart';
+import 'package:bloodms/resources/firebase_auth_provider.dart';
 import 'package:bloodms/resources/firestore_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:polygon_clipper/polygon_border.dart';
+import 'donormap.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -12,13 +16,14 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   UserModel donor;
-  Animation <double> animation;
-  AnimationController animaitonController ;
+  Animation<double> animation;
+  AnimationController animaitonController;
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-   
+
     FirestoreProvider().getUser().then((d) {
       setState(() {
         donor = d;
@@ -35,67 +40,103 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             ? CircularProgressIndicator()
             : BaseScreen(
                 child: SafeArea(
-                  child: Stack(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Row(
-                        // mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(context);
+                            },
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(
+                                    MdiIcons.deleteForever,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () => showConfirmationDialog(
+                                      title: 'Are you sure ?',
+                                      body: 'You will no longer be donor',
+                                      onYes: () async {
+                                        FirebaseAuthProvider().logout();
+                                        FirestoreProvider().delete();
+
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Home()),
+                                                (predicate) => false);
+                                      })),
+                              IconButton(
+                                icon: Icon(
+                                  MdiIcons.accountEdit,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditProfile(
+                                                userModel: donor,
+                                              )));
+                                },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text('Your Profile',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic)),
+                            SizedBox(width: 0.0, height: 0.0),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Colors.red.shade400,
-                                        Colors.purpleAccent,
-                                        Colors.green,
-                                        Colors.cyanAccent,
-                                        Colors.brown,
-                                        Colors.deepOrangeAccent,
-                                        Colors.orange,
-                                        Colors.yellow,
-                                        Colors.lightGreen,
-                                        Colors.indigoAccent,
-                                      ]),
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 15.0,
-                                      offset: Offset(0.0, 10.0),
-                                    ),
-                                  ],
-                                ),
-
-                                padding: EdgeInsets.all(20),
-                                // constraints: BoxConstraints(minHeight: 105),
+                                padding: EdgeInsets.all(14),
                                 child: Text(
                                   'Name: ${donor.name}',
                                   style: TextStyle(
                                       color: Colors.white,
+                                      fontStyle: FontStyle.italic,
+                                      // fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Container(
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.all(15),
                                 child: Text(
                                   'Phone: ${donor.contact}',
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Card(
-                                elevation: 10,
-                                borderOnForeground: true,
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  child: Text('Blood Group: ${donor.blood}'),
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 17),
                                 ),
                               ),
                             ],
@@ -126,51 +167,59 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           )
                         ],
                       ),
-                      Positioned(
-                        bottom: 50,
-                        right: 50,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            IconButton(
-                              // alignment: Alignment.bottomCenter,
-                              icon: Icon(
-                                Icons.edit_location,
-                                size: 90,
-                              ),
-                              color: Color(0xffeebbcc),
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 29,),
-                            Text('Edit',style: TextStyle(color: Color(0xffeebbcc)),)
-                          ],
-                        ),
-                      ),
+                      Card(
+                          child: Container(
+                              child: Column(
+                        children: <Widget>[
+                          Text(
+                            'User Location:',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          DonorMap(
+                            isNotExitable: true,
+                            donorLocation:
+                                LatLng(donor.latitude, donor.longitude),
+                            height: 140,
+                            width: 350,
+                          ),
+                        ],
+                      )))
                     ],
                   ),
                 ),
               ),
       ),
-      // floatingActionButton: Container(
-      //   padding: EdgeInsets.all(40),
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.end,
-      //     crossAxisAlignment: CrossAxisAlignment.center,
-      //     children: <Widget>[
-      // IconButton(
-      //   alignment: Alignment.bottomCenter,
-      //   icon: Icon(
-      //     Icons.edit_location,
-      //     size: 90,
-      //   ),
-      //   tooltip: 'Edit',
-      //   color: Color(0xffeebbcc),
-      //   onPressed: () {},
-      // ),
-      //       Text('Edit', style: TextStyle(color: Colors.green)),
-      //     ],
-      //   ),
-      // ),
     );
+  }
+
+  showConfirmationDialog({
+    String title,
+    String body,
+    VoidCallback onYes,
+  }) {
+    showDialog(
+        context: context,
+        builder: (c) {
+          return AlertDialog(title: Text(title), content: Text(body), actions: [
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                "No",
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+            FlatButton(
+              onPressed: onYes,
+              child: Text(
+                "Yes",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ]);
+        });
   }
 }

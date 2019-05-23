@@ -14,11 +14,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
-  String logintext = "LOGIN";
-  String signuptext = "/SignUp";
-
-  bool loading = false;
+  String loginText = "LOGIN";
+  String signupText = "/SignUp";
+  bool isLoading = false;
   bool hiddenText = true;
   var email = "", password = "";
   var _scaffoldkey = GlobalKey<ScaffoldState>();
@@ -35,19 +33,33 @@ class _LoginState extends State<Login> {
             child: Padding(
               padding: EdgeInsets.all(20),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => Home()));
+                        },
+                      )
+                    ],
+                  ),
                   Row(
                     children: <Widget>[
                       GestureDetector(
                         child: Text(
-                          logintext,
+                          loginText,
                           style: TextStyle(color: Colors.white, fontSize: 35),
                         ),
                       ),
                       GestureDetector(
                         child: Text(
-                          signuptext,
+                          signupText,
                           style: TextStyle(color: Colors.white, fontSize: 19),
                         ),
                         onTap: () {
@@ -59,10 +71,9 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  buildLoginForm()
+                  buildLoginForm(),
+                  SizedBox(width: 0.0, height: 0.0),
+                  SizedBox(width: 0.0, height: 0.0),
                 ],
               ),
             ),
@@ -75,20 +86,20 @@ class _LoginState extends State<Login> {
   void _login() async {
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
-       try {
+      try {
         setState(() {
-          loading = true;
+          isLoading = true;
         });
 
         await FirebaseAuthProvider().login(email, password);
         setState(() {
-          loading = false;
+          isLoading = false;
         });
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Home()));
       } catch (err) {
         setState(() {
-          loading = false;
+          isLoading = false;
         });
         showSnackbar(err.message);
       }
@@ -173,7 +184,7 @@ class _LoginState extends State<Login> {
                   borderRadius: 9.0,
                   child: Container(
                     color: Colors.red,
-                    child: loading
+                    child: isLoading
                         ? Center(
                             child: CircularProgressIndicator(
                             valueColor:
@@ -228,16 +239,16 @@ class _LoginState extends State<Login> {
                       } else {
                         try {
                           setState(() {
-                            loading = true;
+                            isLoading = true;
                           });
                           await FirebaseAuthProvider().resetPassword(email);
                           setState(() {
-                            loading = false;
+                            isLoading = false;
                           });
                           showSnackbar('Reset Email has been sent ');
                         } catch (e) {
                           setState(() {
-                            loading = false;
+                            isLoading = false;
                           });
                           showSnackbar(e.message);
                         }
@@ -245,7 +256,7 @@ class _LoginState extends State<Login> {
 
                       Navigator.pop(context);
                     },
-                    child: loading
+                    child: isLoading
                         ? Center(
                             child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
