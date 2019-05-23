@@ -8,7 +8,7 @@
 
 <img src="screenshots/blood.png" >
 
-## Key features
+## :key: Key features
 
 - logins for users/members,
 - New donor can be added,
