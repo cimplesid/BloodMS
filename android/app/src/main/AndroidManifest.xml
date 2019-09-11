@@ -11,7 +11,7 @@
         android:label="bloodms"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyDxmc8oEdS9Em2gvH9Dx1QcLnxLCIBk5BU"/>
+               android:value="your _api key"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
