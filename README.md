@@ -10,7 +10,7 @@
 
 ## :key: Key features
 
- :heavy_check_mark: logins for users/members,<br>
+ :heavy_check_mark: Logins for users/members,<br>
  :heavy_check_mark: New donor can be added,<br>
  :heavy_check_mark: Donor can be contacted easily with the contact info,<br>
  :heavy_check_mark: List of the donors can be easily available from map view,<br>
